@@ -1,0 +1,39 @@
+name: Get Num Mods
+
+# Controls when the workflow will run
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '30 5 * * *'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get number of modules and append to csv
+        run: |
+          NUM_MODS=$(curl -s https://daggerverse.dev/api/refs | jq '.[].path' | sort | uniq | wc -l | tr -d '[:space:]')
+          DATETIME=$(date)
+          echo "$DATETIME,$NUM_MODS" >> data.csv
+
+      - name: Install Dependencies
+        run: |
+          pip install pandas matplotlib
+
+      - name: Run Graph Script
+        run: |
+          python graph.py
+
+      - name: Commit and push data.csv and graph.png
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data.csv graph.png
+          git commit -m "Update num mods data"
+          git push
