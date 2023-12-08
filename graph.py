@@ -16,10 +16,19 @@ plt.figure(figsize=(10, 5))
 plt.plot(data.index, data['modules'])
 
 # Formatting the date on the x-axis
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))  # Format the date display
-plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=1))  # Set interval (change '5' to your desired interval)
-
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
+plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=1))  # Set interval
 plt.gcf().autofmt_xdate()  # Rotate date labels
+
+# Get the most recent value
+most_recent_value = data['modules'].iloc[-1]
+
+# Coordinates to place the text (adjust as needed)
+x_coord = data.index[-1]  # Get the last date from the index
+y_coord = max(data['modules']) * 0.8  # Adjust y-coordinate as needed
+
+# Display the most recent value in the graph
+plt.text(x_coord, y_coord, str(most_recent_value), fontsize=20, ha='center')
 
 # Additional formatting (optional)
 plt.title('Daggerverse Modules')
